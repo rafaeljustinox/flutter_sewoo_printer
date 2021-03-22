@@ -11,7 +11,7 @@ import 'package:sewoo_printer/printer.event.dart';
 import 'package:image/image.dart' as im;
 
 import 'package:printing/printing.dart'
-    show Printing, PdfRaster, PdfRasterImage;
+    show Printing;
 
 class SewooPrinter {
   static const MethodChannel _channel =
