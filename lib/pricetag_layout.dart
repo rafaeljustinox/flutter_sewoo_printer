@@ -32,6 +32,18 @@ class PriceTagLayout {
     };
   }
 
+  static String _formatDate(DateTime date) {
+    String day = date.day.toString();
+    String month = date.month.toString();
+    String year = date.year.toString();
+
+    month = month.length == 1 ? '0' + month : month;
+
+
+    return '$day/$month/$year';
+    
+  }
+
   static List<int> buildDocument(PriceTagData priceTag) {
     
     final doc = Document();
@@ -89,7 +101,7 @@ class PriceTagLayout {
             Text(
               '${formattedPrice['unit']}${formattedPrice['separator']}',
               style: TextStyle(
-                fontSize: 42,
+                fontSize: 46,
                 letterSpacing: -3.0,
                 fontWeight: FontWeight.bold
               ),
@@ -111,14 +123,18 @@ class PriceTagLayout {
   static _buildPromoPrice(PriceTagData priceTag) {
 
     Map<String,String> formattedPrice 
-      = PriceTagLayout._formatPrice(priceTag.price);
+      = PriceTagLayout._formatPrice(priceTag.promoPrice);
+
+    if (priceTag.promoPrice == 0 || priceTag.promoPriceQuantity == 0) {
+      return SizedBox();
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
@@ -126,15 +142,15 @@ class PriceTagLayout {
               child: Text(
                 ('Acima de').toUpperCase(),
                 style: TextStyle(
-                  fontSize: 7,
+                  fontSize: 6,
                   fontWeight: FontWeight.bold
                 ),
               ),
             ),
             Text(
-              (10).toString(),
+              (priceTag.promoPriceQuantity).toString(),
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 13,
                 letterSpacing: -0.5,
                 fontWeight: FontWeight.bold
               ),
@@ -214,6 +230,34 @@ class PriceTagLayout {
     );
   }
 
+  static _buildFooter(PriceTagData priceTag) {
+
+    return Padding(
+      padding: EdgeInsets.only(top: 3.0),
+      child: SizedBox(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              priceTag.codigo.toString(),
+              style: TextStyle(
+                fontSize: 7.0,
+              )
+            ),
+            Text(
+              PriceTagLayout._formatDate(DateTime.now()),
+              style: TextStyle(
+                fontSize: 8.0,
+              )
+            ),
+          ]
+        )
+      )
+    );
+    
+  }
+
   static _buildContent(PriceTagData priceTag) {
     var yellowBoxWidth = 51 * PdfPageFormat.mm;
     var yellowBoxHeight = 28 * PdfPageFormat.mm;
@@ -261,35 +305,41 @@ class PriceTagLayout {
               )
             )
           ),
-          SizedBox(
-            width: yellowBoxWidth,
-            height: yellowBoxHeight,//double.maxFinite,
-            child: Padding(
-              padding: EdgeInsets.only(
-                top: 1.0,
-                right: 0.0,
-                bottom: 0.0
+          Column(
+            children: [
+              SizedBox(
+                width: yellowBoxWidth,
+                height: yellowBoxHeight,//double.maxFinite,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: 1.0,
+                    right: 0.0,
+                    bottom: 0.0
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.only(
+                      left: 4.0,
+                      top: 4.0,
+                      right: 4.0,
+                      bottom: 2.0
+                    ),
+                    constraints: BoxConstraints.expand(),
+                    decoration: BoxDecoration(
+                      color: PdfColor.fromHex('#fffa73'),
+                      //border: Border.all(width: 1.0)
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildPrice( priceTag ),
+                        _buildPromoPrice( priceTag )
+                      ]
+                    ),
+                  ),
+                )
               ),
-              child: Container(
-                padding: EdgeInsets.only(
-                  left: 4.0,
-                  top: 4.0,
-                  right: 4.0,
-                  bottom: 0.0
-                ),
-                constraints: BoxConstraints.expand(),
-                decoration: BoxDecoration(
-                  color: PdfColor.fromHex('#fffa73'),
-                  //border: Border.all(width: 1.0)
-                ),
-                child: Column(
-                  children: [
-                    _buildPrice( priceTag ),
-                    _buildPromoPrice( priceTag )
-                  ]
-                ),
-              ),
-            )
+              _buildFooter( priceTag )
+            ]
           ),
         ]
       )

@@ -78,8 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
     currency: 'R\$',
     date: '01/08/2021',
     description: 'COPO PLAST TRANSP PP 250ML',
-    price: 6.99,
-    promoPrice: 6.99
+    price: 126.99,
+    promoPrice: 96.99,
+    promoPriceQuantity: 100
   );
   
   initializePrinter() {
