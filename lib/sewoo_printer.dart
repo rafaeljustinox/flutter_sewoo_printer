@@ -1,19 +1,18 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
-
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sewoo_printer/pdf.doc.generator.dart';
+import 'package:sewoo_printer/price.tag.layout.dart';
+import 'package:sewoo_printer/price.tag.data.dart';
 import 'package:sewoo_printer/printer.event.dart';
-
 import 'package:image/image.dart' as im;
-
-import 'package:printing/printing.dart'
-    show Printing;
+import 'package:printing/printing.dart' show Printing;
+import 'package:sewoo_printer/sewoo.document.dart';
 
 class SewooPrinter {
+
   static const MethodChannel _channel =
       const MethodChannel('sewoo_printer');
 
@@ -29,11 +28,20 @@ class SewooPrinter {
     return version;
   }
 
-  static Future<void> connect() async {
-    try {
-      await _channel.invokeMethod('connect');
-    } on PlatformException catch (e) {
-      print(e);
+  static Future<bool> connect(String ip, int port) async {
+    if ( ip == null || port == null ) {
+      return false;
+    } else {
+      try {
+        await _channel.invokeMethod('connect', <String, dynamic> {
+          'ip': ip,
+          'port': port
+        });
+        return true;
+      } on PlatformException catch (e) {
+        print(e);
+        return false;
+      }
     }
   }
 
@@ -46,10 +54,8 @@ class SewooPrinter {
   }
 
   static Future<String> getStatus() async {
-
     String status;
     try {
-
       final String result = await _channel.invokeMethod('status');
       status = result;
       
@@ -59,7 +65,6 @@ class SewooPrinter {
 
     _status = status;
     return _status;
-
   }
 
   static Future<bool> copyFile(String fileName) async {
@@ -107,21 +112,22 @@ class SewooPrinter {
     return request.isGranted;
   }
 
-  static Future<String> _buildAndSaveDocument(String filename, bool downToUp) async {
-    final docContent = PdfDocGenerator.buildDocument();
+  static Future<String> _saveDocument( SewooDocument doc ) async {
+
+    String fileName = "page.png";
+
     Directory imgDir = await getExternalStorageDirectory();
-    final String path = "${imgDir.path}/$filename";
+    final String path = "${imgDir.path}/$fileName";
     final file = File(path);
 
-
-    await for (var page in Printing.raster(docContent, dpi: SewooPrinter._printerDpi)) {
+    await for (var page in Printing.raster(doc.content, dpi: SewooPrinter._printerDpi)) {
 
       final pg = await page.toImage();
       final ByteData byteData = await pg.toByteData(format: ImageByteFormat.png);
       Uint8List bytes = byteData.buffer.asUint8List();
       
-      if(downToUp) {
-        print('rotating image');
+      if(doc.downToUp) {
+        //print('Rotating image');
         im.Image image = im.decodeImage( bytes );
         im.Image rotatedImage = im.copyRotate( image , 180);
         bytes  = im.encodePng(rotatedImage) as Uint8List;
@@ -131,20 +137,32 @@ class SewooPrinter {
     return path;
   }
 
-  static Future<String> printImage(bool downToUp) async {
-    
-    print('SewooPrinter: Printing image');
-    String fileName = "page.png";
+  static Future<String> printPriceTag(bool downToUp) async {
 
-    final String path = await _buildAndSaveDocument(fileName,downToUp);
-    print(path);
+    print('SewooPrinter: Printing Price Tag');
+
+    PriceTagData priceTag = PriceTagData(
+      barCode: '7896030822506',
+      codigo: '98765',
+      currency: 'R\$',
+      date: '01/08/2021',
+      description: 'COPO PLAST TRANSP PP 250ML',
+      price: '1234,99',
+      promoPrice: '1234,99'
+    );
+    
+    final content = PriceTagLayout.buildDocument(priceTag);
+    SewooDocument document = SewooDocument(
+      content: content,
+      downToUp: true
+    );
+    
+    final String path = await _saveDocument( document );
 
     if ( await _checkStoragePermission() ) {
-
       String status = 'Printing';
 
       try {
-
         bool success = await _channel.invokeMethod('printImage', <String, dynamic> {
           "path": path,
           "width": _mm2dots( 39 ), 
@@ -155,7 +173,6 @@ class SewooPrinter {
       } on PlatformException catch (e) {
         status = 'Failed: ${e.message}';
       }
-
       _status = status;
 
     } else {

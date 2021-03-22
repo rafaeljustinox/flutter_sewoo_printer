@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:sewoo_printer/pdf.doc.generator.dart';
+import 'package:sewoo_printer/printer.consts.dart';
+import 'package:sewoo_printer/price.tag.layout.dart';
+import 'package:sewoo_printer/price.tag.data.dart';
 import 'package:sewoo_printer/printer.event.dart';
 import 'package:sewoo_printer/sewoo_printer.dart';
 import 'package:printing/printing.dart';
@@ -44,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Sewoo Printer CPCL'),
     );
   }
 }
@@ -59,6 +61,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  final printerIP = '192.168.0.107';
+  final printerPort = 9100;
   final printerDpi = 203.0;
   final _images = <ImageProvider>[];
   SewooPrinter printer;
@@ -66,11 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _connected = false;
   // Reading direction (down to up = left to right)
   bool _downToUp = true;
+
+  PriceTagData _priceTag = PriceTagData(
+    barCode: '7896030822506',
+    codigo: '98765',
+    currency: 'R\$',
+    date: '01/08/2021',
+    description: 'COPO PLAST TRANSP PP 250ML',
+    price: '1234,99',
+    promoPrice: '1234,99'
+  );
   
   initializePrinter() {
-    /* if (printer == null) {
-      printer = new SewooPrinter();
-    } */
 
     SewooPrinter.listenEvents(( PrinterEvent event ) {
 
@@ -91,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     initializePrinter();
-    SewooPrinter.connect();
+    SewooPrinter.connect(printerIP, printerPort);
     _updateImages();
     super.initState();
   }
@@ -99,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void reassemble() {
     initializePrinter();
-    SewooPrinter.connect();
+    SewooPrinter.connect(printerIP, printerPort);
     _updateImages();
     super.reassemble();
   }
@@ -126,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (SewooPrinter.connected) {
       SewooPrinter.disconnect();
     } else {
-      SewooPrinter.connect();
+      SewooPrinter.connect(printerIP, printerPort);
     }
   }
 
@@ -135,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _printPriceTag() async {
-    _status = await SewooPrinter.printImage(this._downToUp);
+    _status = await SewooPrinter.printPriceTag(this._downToUp);
   }
 
   void _updateImages() async {
@@ -143,7 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     await for (
       var page in Printing.raster(
-        PdfDocGenerator.buildDocument(), dpi: printerDpi)
+        PriceTagLayout.buildDocument(this._priceTag),
+        dpi: PrinterConsts.dpi)
       ) {
       _images.add(PdfRasterImage(page));
     }
