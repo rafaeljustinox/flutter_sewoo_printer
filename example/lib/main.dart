@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:sewoo_printer/printer.consts.dart';
+import 'package:sewoo_printer/printer_consts.dart';
 import 'package:sewoo_printer/pricetag_layout.dart';
 import 'package:sewoo_printer/pricetag_data.dart';
 import 'package:sewoo_printer/printer_events.dart';
