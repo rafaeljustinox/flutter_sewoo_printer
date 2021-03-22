@@ -1,6 +1,6 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
-import 'package:sewoo_printer/price.tag.data.dart';
+import 'package:sewoo_printer/pricetag_data.dart';
 
 class PriceTagLayout {
   /*
@@ -9,9 +9,29 @@ class PriceTagLayout {
   Portanto = 51 * 2.85.. = 145,7142
   altura = 27mm * 2.85.. = 
   */
-  static final printerPaperWidth = 37.0; // Milimeters, might be without margin
-  static final printerPaperHeight = 95.5; // Milimeters, might be without margin
+  static final labelWidth = 37.0; // Milimeters, might be without margin
+  static final labelHeight = 95.5; // Milimeters, might be without margin
   
+  static Map<String,String> _formatPrice(num price) {
+    String unit;
+    String cents;
+    String separator = ',';
+    List<String> parts = price.toString().split('.');
+
+    if (parts.length <= 1) {
+      unit = unit.toString();
+      cents = '00';
+    } else {
+      unit = parts[0];
+      cents = parts[1];
+    }
+    return {
+      "unit" : unit,
+      "cents" : cents,
+      "separator": separator,
+    };
+  }
+
   static List<int> buildDocument(PriceTagData priceTag) {
     
     final doc = Document();
@@ -20,8 +40,8 @@ class PriceTagLayout {
       Page(
         orientation: PageOrientation.landscape,
         pageFormat: PdfPageFormat(
-          PriceTagLayout.printerPaperWidth * PdfPageFormat.mm,
-          PriceTagLayout.printerPaperHeight * PdfPageFormat.mm,
+          PriceTagLayout.labelWidth * PdfPageFormat.mm,
+          PriceTagLayout.labelHeight * PdfPageFormat.mm,
           marginAll: 0.0,
         ),
         build: (context) => _buildContent(priceTag)
@@ -46,14 +66,17 @@ class PriceTagLayout {
     );
   }
 
-  static _buildPrice(PriceTagData priceTagData) {
+  static _buildPrice(PriceTagData priceTag) {
 
+    Map<String,String> formattedPrice 
+      = PriceTagLayout._formatPrice(priceTag.price);
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          priceTagData.currency,
+          priceTag.currency,
           style: TextStyle(
             fontSize: 12,
             letterSpacing: -1.0,
@@ -64,17 +87,17 @@ class PriceTagLayout {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${priceTagData.price.split(',')[0]},',
+              '${formattedPrice['unit']}${formattedPrice['separator']}',
               style: TextStyle(
-                fontSize: 46,
+                fontSize: 42,
                 letterSpacing: -3.0,
                 fontWeight: FontWeight.bold
               ),
             ),
             Text(
-              priceTagData.price.split(',')[1],
+              '${formattedPrice['cents']}',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 20,
                 letterSpacing: 0.2,
                 fontWeight: FontWeight.bold,
               )
@@ -86,18 +109,55 @@ class PriceTagLayout {
   }
 
   static _buildPromoPrice(PriceTagData priceTag) {
-    //TODO: Remove fixed value
-    //priceTag.price = '1234,99';
-    const price = '1234,99';
+
+    Map<String,String> formattedPrice 
+      = PriceTagLayout._formatPrice(priceTag.price);
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(right: 4.0),
+              child: Text(
+                ('Acima de').toUpperCase(),
+                style: TextStyle(
+                  fontSize: 7,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+            Text(
+              (10).toString(),
+              style: TextStyle(
+                fontSize: 10,
+                letterSpacing: -0.5,
+                fontWeight: FontWeight.bold
+              ),
+            ),
+          ]
+        ),
+        
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: EdgeInsets.only(right: 8.0),
+              child: Text(
+                priceTag.currency,
+                style: TextStyle(
+                  fontSize: 7,
+                  letterSpacing: -1.0,
+                  fontWeight: FontWeight.bold
+                )
+              ),
+            ),
             Text(
-              '${price.split(',')[0]},',
+              '${formattedPrice['unit']}${formattedPrice['separator']}',
               style: TextStyle(
                 fontSize: 13,
                 letterSpacing: -0.5,
@@ -105,7 +165,7 @@ class PriceTagLayout {
               ),
             ),
             Text(
-              price.split(',')[1],
+              formattedPrice['cents'],
               style: TextStyle(
                 fontSize: 10,
                 //letterSpacing: 0.2,
@@ -130,7 +190,7 @@ class PriceTagLayout {
           alignment: WrapAlignment.center,
           children: [
             Text(
-              priceTag.barCode,
+              (priceTag.barCode).toString(),
                 style: TextStyle(
                 fontSize: 8.0, 
                 fontWeight: FontWeight.bold
@@ -144,7 +204,7 @@ class PriceTagLayout {
                   drawText: false,
                   color: PdfColor.fromHex("#000000"),
                   barcode: Barcode.code128(),
-                  data: priceTag.barCode,
+                  data: priceTag.barCode.toString(),
                 ),
               )
             )

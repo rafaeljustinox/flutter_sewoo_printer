@@ -4,12 +4,12 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sewoo_printer/price.tag.layout.dart';
-import 'package:sewoo_printer/price.tag.data.dart';
-import 'package:sewoo_printer/printer.event.dart';
+import 'package:sewoo_printer/pricetag_layout.dart';
+import 'package:sewoo_printer/pricetag_data.dart';
+import 'package:sewoo_printer/printer_events.dart';
 import 'package:image/image.dart' as im;
 import 'package:printing/printing.dart' show Printing;
-import 'package:sewoo_printer/sewoo.document.dart';
+import 'package:sewoo_printer/sewoo_document.dart';
 
 class SewooPrinter {
 
@@ -137,19 +137,10 @@ class SewooPrinter {
     return path;
   }
 
-  static Future<String> printPriceTag(bool downToUp) async {
+  static Future<String> printPriceTag(
+    PriceTagData priceTag, bool downToUp) async {
 
     print('SewooPrinter: Printing Price Tag');
-
-    PriceTagData priceTag = PriceTagData(
-      barCode: '7896030822506',
-      codigo: '98765',
-      currency: 'R\$',
-      date: '01/08/2021',
-      description: 'COPO PLAST TRANSP PP 250ML',
-      price: '1234,99',
-      promoPrice: '1234,99'
-    );
     
     final content = PriceTagLayout.buildDocument(priceTag);
     SewooDocument document = SewooDocument(

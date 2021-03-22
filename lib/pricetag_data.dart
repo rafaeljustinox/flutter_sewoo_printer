@@ -1,22 +1,22 @@
 class IPriceTagData {
-  String barCode;
-  String codigo;
+  int barCode;
+  int codigo;
   String currency;
   String description;
-  String price;
-  String promoPrice;
+  num price;
+  num promoPrice;
   String date;
 }
 
 class PriceTagData implements IPriceTagData {
   @override
-  String barCode;
+  int barCode;
 
   @override
   String currency;
 
   @override
-  String codigo;
+  int codigo;
 
   @override
   String date;
@@ -25,19 +25,19 @@ class PriceTagData implements IPriceTagData {
   String description;
 
   @override
-  String price;
+  num price;
 
   @override
-  String promoPrice;
+  num promoPrice;
 
   PriceTagData({
-    String barCode = '',
+    int barCode = 0,
     String currency = '',
-    String codigo = '',
+    int codigo = 0,
     String date = '',
     String description = '',
-    String price = '',
-    String promoPrice = ''
+    num price = 0.00,
+    num promoPrice = 0.00
   }){
     this.barCode = barCode;
     this.currency = currency;

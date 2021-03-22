@@ -3,9 +3,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:sewoo_printer/printer.consts.dart';
-import 'package:sewoo_printer/price.tag.layout.dart';
-import 'package:sewoo_printer/price.tag.data.dart';
-import 'package:sewoo_printer/printer.event.dart';
+import 'package:sewoo_printer/pricetag_layout.dart';
+import 'package:sewoo_printer/pricetag_data.dart';
+import 'package:sewoo_printer/printer_events.dart';
 import 'package:sewoo_printer/sewoo_printer.dart';
 import 'package:printing/printing.dart';
 
@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final printerPort = 9100;
   final printerDpi = 203.0;
   final _images = <ImageProvider>[];
+  
   SewooPrinter printer;
   String _status = '';
   bool _connected = false;
@@ -72,13 +73,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _downToUp = true;
 
   PriceTagData _priceTag = PriceTagData(
-    barCode: '7896030822506',
-    codigo: '98765',
+    barCode: 7896030822506,
+    codigo: 98765,
     currency: 'R\$',
     date: '01/08/2021',
     description: 'COPO PLAST TRANSP PP 250ML',
-    price: '1234,99',
-    promoPrice: '1234,99'
+    price: 6.99,
+    promoPrice: 6.99
   );
   
   initializePrinter() {
@@ -146,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _printPriceTag() async {
-    _status = await SewooPrinter.printPriceTag(this._downToUp);
+    _status = await SewooPrinter.printPriceTag(this._priceTag, this._downToUp);
   }
 
   void _updateImages() async {
