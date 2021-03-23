@@ -43,8 +43,18 @@ public class SewooPrinterPlugin implements FlutterPlugin, MethodCallHandler {
       result.success("Android " + android.os.Build.VERSION.RELEASE);
     } else if (call.method.equals("connect")) {
       try {
-        result.success(null);
-        handler.connect();
+        String ip = call.argument("ip");
+        int port = (int) call.argument("port");
+
+        if (ip == null) {
+          result.error("1", "IP Address is missing","");
+        } else if (port == 0) {
+          result.error("1", "PORT is missing","");
+        } else {
+          // IP and Port was informed
+          result.success(null);
+          handler.connect(ip, port);
+        }
       } catch (Exception ex) {
         result.error("1", ex.getMessage(), ex.getStackTrace());
       }
@@ -68,10 +78,15 @@ public class SewooPrinterPlugin implements FlutterPlugin, MethodCallHandler {
 
     } else if (call.method.equals("print")) {
       try {
-        result.success(null);
-        int width = call.argument("width");
-        int height = call.argument("height");
-        handler.print(width, height);
+
+        if (call.arguments == null) {
+          result.error("1", "Missing Width and Height", "");
+        } else {
+          int width = call.argument("width");
+          int height = call.argument("height");
+          result.success(null);
+          handler.print(width, height);
+        }
 
       } catch (Exception ex) {
         result.error("1", ex.getMessage(), ex.getStackTrace());
@@ -82,9 +97,13 @@ public class SewooPrinterPlugin implements FlutterPlugin, MethodCallHandler {
         String path = call.argument("path");
         int width_i = call.argument("width");
         int height_i = call.argument("height");
-        boolean ok = handler.printImage(path, width_i, height_i);
-        result.success(ok);
 
+        if (path == null || width_i == 0 || height_i == 0) {
+          result.error("1", "You need to pass the path, width and height", "");
+        } else {
+          boolean ok = handler.printImage(path, width_i, height_i);
+          result.success(ok);
+        }
       } catch (Exception ex) {
         result.error("1", ex.getMessage(), ex.getStackTrace());
       }

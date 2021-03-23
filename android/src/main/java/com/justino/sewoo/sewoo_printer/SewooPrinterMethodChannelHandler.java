@@ -42,7 +42,7 @@ public class SewooPrinterMethodChannelHandler {
     }
   }
 
-  void connect() {
+  void connect(String ip, int port) {
 
     try {
       initialize();
@@ -50,8 +50,7 @@ public class SewooPrinterMethodChannelHandler {
         wifiPort.disconnect();
         wfThread.interrupt();
       }
-      String input_ip = "192.168.0.107";
-      wifiSetup(input_ip);
+      wifiSetup(ip, port);
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -171,29 +170,37 @@ public class SewooPrinterMethodChannelHandler {
     }
   }
 
-  void wifiSetup(String ip) {
+  void wifiSetup(String ip, int port) {
     try {
-      wifiConn(ip);
+      wifiConn(ip, port);
     } catch (IOException e) {
       Log.d(this.TAG, "wifiSetup: Error trying to connect to printer");
       e.printStackTrace();
     }
   }
 
-  void wifiConn(String ipAddr) throws IOException {
-    ConnWF _connWf = new ConnWF();
-    _connWf.execute(ipAddr);
+  void wifiConn(String ipAddr, int port) throws IOException {
+    ConnWF _connWf = new ConnWF(ipAddr, port);
+    _connWf.execute();
   }
 
-  class ConnWF extends AsyncTask<String, Void, Boolean> {
+  class ConnWF extends AsyncTask<Void, Void, Boolean> {
+    String ip;
+    int port;
+
+    public ConnWF(String ip, int port) {
+      this.ip = ip;
+      this.port = port;
+    }
 
     @Override
-    protected Boolean doInBackground(String... params) {
+    protected Boolean doInBackground(Void... params) {
       Boolean retVal = null;
       try {
         //IP
-        String ip = params[0];
-        wifiPort.connect(ip);
+        String ip = this.ip;
+        int port = this.port;
+        wifiPort.connect(ip, port);
         lastConnAddr = ip;
         retVal = true;
       } catch (IOException e) {

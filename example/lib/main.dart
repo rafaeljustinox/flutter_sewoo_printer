@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final printerIP = '192.168.0.107';
   final printerPort = 9100;
-  final printerDpi = 203.0;
+  final printerDpi = PrinterConsts.dpi;
   final _images = <ImageProvider>[];
   
   SewooPrinter printer;
@@ -222,16 +222,22 @@ class _MyHomePageState extends State<MyHomePage> {
           ) 
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _printPriceTag,
-        tooltip: 'Conectar',
-        label: Row(
-          children: [
-          Icon(Icons.print),
-          SizedBox(width: 8.0),
-          Text('Print'),
-        ]),
-      ),
+      floatingActionButton: Visibility(
+        //duration: Duration(milliseconds: 500),
+        //opacity: _connected ? 1.0 : 0.0,
+        visible: _connected,
+        child: FloatingActionButton.extended(
+          onPressed: _printPriceTag,
+          tooltip: 'Conectar',
+          label: Row(
+            children: [
+            Icon(Icons.print),
+            SizedBox(width: 8.0),
+            Text('Print'),
+          ]),
+        )
+      )
     );
   }
+
 }

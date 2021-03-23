@@ -85,6 +85,7 @@ class SewooPrinter {
       //print('Signal received: ${call.method}');
       switch (call.method) {
         case 'connect':
+          print('Recebido evendo de connect');
           SewooPrinter._connected = call.arguments ? true : false;
           PrinterEvent event = PrinterEvent(call.method, SewooPrinter._connected);
           callback( event );

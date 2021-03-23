@@ -1,3 +1,9 @@
+## 0.0.3
+
+* Some fixes
+* Improvement of example
+* Support to pass IP and PORT to connect to printer
+
 ## 0.0.2
 
 * Finished price tag layout
