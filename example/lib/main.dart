@@ -66,7 +66,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final printerDpi = PrinterConsts.dpi;
   final _images = <ImageProvider>[];
   
-  SewooPrinter printer;
   String _status = '';
   bool _connected = false;
   // Reading direction (down to up = left to right)
@@ -77,9 +76,10 @@ class _MyHomePageState extends State<MyHomePage> {
     codigo: 98765,
     currency: 'R\$',
     date: '01/08/2021',
-    description: 'COPO PLAST TRANSP PP 250ML',
-    price: 126.99,
-    promoPrice: 96.99,
+    description: 'BALOES SAO ROQUE CORES SORTIDAS 50U TESTE',
+    //description: 'COPO PLAST TRANSP PP 250ML',
+    price: 126.9,
+    promoPrice: 96.9,
     promoPriceQuantity: 100
   );
   
@@ -154,10 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void _updateImages() async {
     _images.clear();
 
-    await for (
-      var page in Printing.raster(
+    await for ( var page in Printing.raster(
         PriceTagLayout.buildDocument(this._priceTag),
-        dpi: PrinterConsts.dpi)
+        dpi: PrinterConsts.dpi )
       ) {
       _images.add(PdfRasterImage(page));
     }

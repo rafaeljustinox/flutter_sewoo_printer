@@ -23,7 +23,9 @@ class PriceTagLayout {
       cents = '00';
     } else {
       unit = parts[0];
-      cents = parts[1];
+      cents = parts[1].length == 1
+        ? '${ parts[1]}0'
+        : parts[1];
     }
     return {
       "unit" : unit,
@@ -71,7 +73,7 @@ class PriceTagLayout {
         child: Text(
           priceTag.description,
           style: TextStyle(
-            fontSize: 12.0, 
+            fontSize: 10.0, 
           )
         )
       )

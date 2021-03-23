@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Fixes the cents format
+
 ## 0.0.3
 
 * Some fixes
