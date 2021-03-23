@@ -1,10 +1,8 @@
 # sewoo_printer
 
-A Flutter plugin to print price tags on Sewoo LK-P12 CPCL Printer
+[![pub package](https://img.shields.io/pub/v/sewoo_printer.svg)](https://pub.dev/packages/sewoo_printer)
 
-| Plugin | Pub | Points | Popularity | Likes |
-|--------|-----|--------|------------|-------|
-| [sewoo_printer](https://pub.dev/packages/sewoo_printer) | [![pub package](https://img.shields.io/pub/v/sewoo_printer.svg)](https://pub.dev/packages/sewoo_printer) | [![pub points](https://badges.bar/sewoo_printer/pub%20points)](https://pub.dev/packages/sewoo_printer/score) |  [![popularity](https://badges.bar/sewoo_printer/popularity)](https://pub.dev/packages/sewoo_printer/score) | [![likes](https://badges.bar/sewoo_printer/likes)](https://pub.dev/packages/sewoo_printer/score)
+A Flutter plugin to print price tags on Sewoo LK-P12 CPCL Printer
 
 ## Getting Started (under development)
 
