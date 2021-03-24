@@ -139,14 +139,20 @@ class SewooPrinter {
   }
 
   static Future<String> printPriceTag(
-    PriceTagData priceTag, bool downToUp) async {
+    PriceTagData priceTag, { int copies = 1, bool downToUp = true }) async {
+
+    if (copies <= 0) {
+      _status = 'Copies should be between 1 and 20';
+      print(_status);
+      return _status;
+    }
 
     print('SewooPrinter: Printing Price Tag');
     
     final content = PriceTagLayout.buildDocument(priceTag);
     SewooDocument document = SewooDocument(
       content: content,
-      downToUp: true
+      downToUp: downToUp
     );
     
     final String path = await _saveDocument( document );
@@ -158,7 +164,8 @@ class SewooPrinter {
         bool success = await _channel.invokeMethod('printImage', <String, dynamic> {
           "path": path,
           "width": _mm2dots( 39 ), 
-          "height": _mm2dots( 102 )
+          "height": _mm2dots( 102 ),
+          "copies": copies
         });
         status = success ? 'Success' : 'Fail: Image not found';
         

@@ -132,9 +132,9 @@ public class SewooPrinter {
     cpclPrinter.printForm();
   }
 
-  public boolean Print_Image(String path, int count, int paper_type) throws IOException {
+  public boolean Print_Image(String path, int copies, int paper_type) throws IOException {
 
-    cpclPrinter.setForm(0, 200, 200, this.labelHeight, this.labelWidth, count);
+    cpclPrinter.setForm(0, 200, 200, this.labelHeight, this.labelWidth, copies);
     cpclPrinter.setMedia(paper_type);
 
     int result = cpclPrinter.printBitmap(path, 1, 1);

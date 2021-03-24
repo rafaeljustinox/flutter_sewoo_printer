@@ -155,12 +155,12 @@ public class SewooPrinterMethodChannelHandler {
 
   }
 
-  boolean printImage(String path, int width, int height) {
+  boolean printImage(String path, int width, int height, int copies) {
 
     try {
       if (isConnected()) {
         printer.setLabelSize(width, height);
-        boolean ok = printer.Print_Image(path, count, paperType);
+        boolean ok = printer.Print_Image(path, copies, paperType);
         return ok;
       }
       return false;

@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Added support to define the number of copies
+
 ## 0.0.4
 
 * Fixes the cents format

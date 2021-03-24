@@ -97,11 +97,12 @@ public class SewooPrinterPlugin implements FlutterPlugin, MethodCallHandler {
         String path = call.argument("path");
         int width_i = call.argument("width");
         int height_i = call.argument("height");
+        int copies = call.argument("copies");
 
         if (path == null || width_i == 0 || height_i == 0) {
           result.error("1", "You need to pass the path, width and height", "");
         } else {
-          boolean ok = handler.printImage(path, width_i, height_i);
+          boolean ok = handler.printImage(path, width_i, height_i, copies);
           result.success(ok);
         }
       } catch (Exception ex) {

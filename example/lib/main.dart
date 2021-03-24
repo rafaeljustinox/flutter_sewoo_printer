@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final printerIP = '192.168.0.107';
   final printerPort = 9100;
   final printerDpi = PrinterConsts.dpi;
-  final _images = <ImageProvider>[];
+  final _thumbnails = <ImageProvider>[];
   
   String _status = '';
   bool _connected = false;
@@ -105,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     initializePrinter();
     SewooPrinter.connect(printerIP, printerPort);
-    _updateImages();
+    _updateThumbnails();
     super.initState();
   }
 
@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void reassemble() {
     initializePrinter();
     SewooPrinter.connect(printerIP, printerPort);
-    _updateImages();
+    _updateThumbnails();
     super.reassemble();
   }
 
@@ -148,17 +148,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _printPriceTag() async {
-    _status = await SewooPrinter.printPriceTag(this._priceTag, this._downToUp);
+    _status = await SewooPrinter.printPriceTag(
+      this._priceTag,
+      downToUp: this._downToUp,
+      copies: 1
+    );
   }
 
-  void _updateImages() async {
-    _images.clear();
+  void _updateThumbnails() async {
+    _thumbnails.clear();
 
     await for ( var page in Printing.raster(
         PriceTagLayout.buildDocument(this._priceTag),
         dpi: PrinterConsts.dpi )
       ) {
-      _images.add(PdfRasterImage(page));
+      _thumbnails.add(PdfRasterImage(page));
     }
     setState(() {});
   }
@@ -167,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _downToUp = !_downToUp;
     });
-    _updateImages();
+    _updateThumbnails();
 
     print(_downToUp);
   }
@@ -201,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child:Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListView.builder(
-              itemCount: _images.length,
+              itemCount: _thumbnails.length,
               scrollDirection: Axis.vertical,
               itemBuilder: (context, index) => Padding(
                 padding: EdgeInsets.symmetric(horizontal: 50.0), //50.0
@@ -211,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     //quarterTurns: 3,
                     quarterTurns: this._downToUp ? 2 : 0,
                       child: Image(
-                      image: _images[index],
+                      image: _thumbnails[index],
                       fit: BoxFit.contain,
                     ),
                   )
