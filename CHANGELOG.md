@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Removed logs
+
 ## 0.0.5
 
 * Added support to define the number of copies
