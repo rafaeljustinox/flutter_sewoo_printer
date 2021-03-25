@@ -82,10 +82,8 @@ class SewooPrinter {
   static void listenEvents( Function callback ) {
 
     _channel.setMethodCallHandler((call) {
-      //print('Signal received: ${call.method}');
       switch (call.method) {
         case 'connect':
-          print('Recebido evendo de connect');
           SewooPrinter._connected = call.arguments ? true : false;
           PrinterEvent event = PrinterEvent(call.method, SewooPrinter._connected);
           callback( event );
@@ -128,7 +126,6 @@ class SewooPrinter {
       Uint8List bytes = byteData.buffer.asUint8List();
       
       if(doc.downToUp) {
-        //print('Rotating image');
         im.Image image = im.decodeImage( bytes );
         im.Image rotatedImage = im.copyRotate( image , 180);
         bytes  = im.encodePng(rotatedImage) as Uint8List;
@@ -147,8 +144,6 @@ class SewooPrinter {
       return _status;
     }
 
-    print('SewooPrinter: Printing Price Tag');
-    
     final content = PriceTagLayout.buildDocument(priceTag);
     SewooDocument document = SewooDocument(
       content: content,

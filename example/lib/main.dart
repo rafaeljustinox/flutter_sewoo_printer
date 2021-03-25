@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
           _onStatusChanged(event.value);
           break;
         default:
-          print('Evento não identificado');
+          print('Event not identified: ${event.name}');
           break;
       }
     });
@@ -172,8 +172,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _downToUp = !_downToUp;
     });
     _updateThumbnails();
-
-    print(_downToUp);
   }
 
   @override
