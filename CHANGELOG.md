@@ -1,3 +1,7 @@
+## 0.0.7
+
+* Fixed promo price cents format
+
 ## 0.0.6
 
 * Removed logs
