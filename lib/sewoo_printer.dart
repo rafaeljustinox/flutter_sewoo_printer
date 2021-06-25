@@ -144,7 +144,7 @@ class SewooPrinter {
       return _status;
     }
 
-    final content = PriceTagLayout.buildDocument(priceTag);
+    final content = await PriceTagLayout.buildDocument(priceTag);
     SewooDocument document = SewooDocument(
       content: content,
       downToUp: downToUp

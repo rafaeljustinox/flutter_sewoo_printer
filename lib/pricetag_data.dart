@@ -3,7 +3,7 @@ class PriceTagData {
 
   String currency;
 
-  int codigo;
+  int code;
 
   String date;
 
@@ -15,15 +15,21 @@ class PriceTagData {
 
   int promoPriceQuantity;
 
+  String package;
+
+  String brand;
+
   PriceTagData({
     this.barCode = 0,
     this.currency = 'R\$',
-    this.codigo = 0,
+    this.code = 0,
     this.date = '',
     this.description = '',
     this.price = 0,
     this.promoPrice = 0,
     this.promoPriceQuantity = 0,
+    this.package = '',
+    this.brand = ''
   });
   
 }

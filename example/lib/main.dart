@@ -73,14 +73,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   PriceTagData _priceTag = PriceTagData(
     barCode: 7896030822506,
-    codigo: 98765,
+    code: 98765,
     currency: 'R\$',
     date: '01/08/2021',
     description: 'BALOES SAO ROQUE CORES SORTIDAS 50U TESTE',
     //description: 'COPO PLAST TRANSP PP 250ML',
     price: 126.9,
     promoPrice: 96.9,
-    promoPriceQuantity: 100
+    promoPriceQuantity: 100,
+    brand: 'DIVERTS',
+    package: 'UN'
   );
   
   initializePrinter() {
@@ -159,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _thumbnails.clear();
 
     await for ( var page in Printing.raster(
-        PriceTagLayout.buildDocument(this._priceTag),
+        await PriceTagLayout.buildDocument(this._priceTag),
         dpi: PrinterConsts.dpi )
       ) {
       _thumbnails.add(PdfRasterImage(page));

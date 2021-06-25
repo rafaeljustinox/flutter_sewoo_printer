@@ -44,7 +44,7 @@ class PriceTagLayout {
     
   }
 
-  static List<int> buildDocument(PriceTagData priceTag) {
+  static Future<List<int>> buildDocument(PriceTagData priceTag) async {
     
     final doc = Document();
 
@@ -60,7 +60,7 @@ class PriceTagLayout {
       ),
     );
 
-    return doc.save();
+    return await doc.save();
   }
 
   static _buildDescription(PriceTagData priceTag) {
@@ -235,23 +235,63 @@ class PriceTagLayout {
     return Padding(
       padding: EdgeInsets.only(top: 3.0),
       child: SizedBox(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              priceTag.codigo.toString(),
-              style: TextStyle(
-                fontSize: 7.0,
-              )
-            ),
-            Text(
-              PriceTagLayout._formatDate(DateTime.now()),
-              style: TextStyle(
-                fontSize: 8.0,
-              )
-            ),
-          ]
+        width: 144,
+        child: Container(
+          /* decoration: BoxDecoration(
+            color: PdfColor.fromHex('#fffa73'),
+          ), */
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                //color: PdfColor.fromHex('#00FFFF'),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      priceTag.code.toString(),
+                      style: TextStyle(
+                        fontSize: 7.0,
+                      )
+                    ),
+                    Text(
+                      PriceTagLayout._formatDate(DateTime.now()),
+                      style: TextStyle(
+                        fontSize: 8.0,
+                      )
+                    ),
+                  ]
+                ),
+              ),
+              SizedBox(width: 8.0),
+              Expanded(
+                child: Container(
+                  //color: PdfColor.fromHex('#FFFF00'),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        priceTag.package,
+                        style: TextStyle(
+                          fontSize: 7.0,
+                        )
+                      ),
+                      Text(
+                        priceTag.brand.length > 16 
+                        ? priceTag.brand.substring(0, 15)
+                        : priceTag.brand,
+                        style: TextStyle(
+                          fontSize: 8.0,
+                        )
+                      ),
+                    ]
+                  ),
+                ),
+              ),
+            ]
+          )
         )
       )
     );

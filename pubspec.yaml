@@ -1,6 +1,6 @@
 name: sewoo_printer
 description: A Flutter plugin to print price tags on Sewoo LK-P12 CPCL Printer.
-version: 0.0.7
+version: 0.0.8
 homepage: https://github.com/rafaeljustinox/flutter_sewoo_printer
 
 environment:
@@ -11,11 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  permission_handler: ^5.0.1+1
-  path_provider: ^1.6.27
-  pdf: ^1.6.0
-  printing: ^3.6.0
-  image: ^2.1.19
+  permission_handler: ^8.1.1
+  path_provider: ^2.0.2
+  pdf: ^3.4.2
+  printing: ^5.4.2
+  image: ^3.0.2
 
 dev_dependencies:
   flutter_test:

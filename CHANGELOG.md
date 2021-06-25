@@ -1,3 +1,7 @@
+## 0.0.8
+
+* Added more information to the footer of pricetag
+
 ## 0.0.7
 
 * Fixed promo price cents format
