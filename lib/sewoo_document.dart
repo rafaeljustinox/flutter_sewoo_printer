@@ -1,18 +1,18 @@
 class ISewooDocument {
-  List<int> content;
-  bool downToUp;
+  List<int>? content;
+  bool? downToUp;
 }
 
 class SewooDocument implements ISewooDocument {
   @override
-  List<int> content;
+  List<int>? content;
 
   @override
-  bool downToUp;
+  bool? downToUp;
 
   SewooDocument({
-    List<int> content,
-    bool downToUp
+    List<int>? content,
+    bool? downToUp
   }){
     this.content = content;
     this.downToUp = downToUp;

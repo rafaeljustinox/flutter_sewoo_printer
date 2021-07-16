@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -16,20 +17,20 @@ class SewooPrinter {
   static const MethodChannel _channel =
       const MethodChannel('sewoo_printer');
 
-  static String _status = '';
+  static String? _status = '';
   static bool _connected = false;
   static num _printerDpi = 203.0;
-  static Directory _imgDir;
+  static Directory? _imgDir;
 
   static bool get connected => _connected;
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
+  static Future<String?> get platformVersion async {
+    final String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
 
   static Future<bool> connect(String ip, int port) async {
-    if ( ip == null || port == null ) {
+    if ( ip.isEmpty || port.isNegative ) {
       return false;
     } else {
       try {
@@ -53,10 +54,10 @@ class SewooPrinter {
     }
   }
 
-  static Future<String> getStatus() async {
-    String status;
+  static Future<String?> getStatus() async {
+    String? status;
     try {
-      final String result = await _channel.invokeMethod('status');
+      final String? result = await _channel.invokeMethod('status');
       status = result;
       
     } on PlatformException catch (e) {
@@ -70,7 +71,7 @@ class SewooPrinter {
   static Future<bool> copyFile(String fileName) async {
     
     SewooPrinter._imgDir = await getExternalStorageDirectory();
-    final String path = "${_imgDir.path}/$fileName";
+    final String path = "${_imgDir!.path}/$fileName";
     
     final file = File(path);
     final ByteData data = await rootBundle.load('assets/$fileName');
@@ -98,7 +99,7 @@ class SewooPrinter {
           break;
       }
       return null;
-    });
+    } as Future<dynamic> Function(MethodCall)?);
   }
 
   static int _mm2dots(int mm) {
@@ -115,18 +116,18 @@ class SewooPrinter {
 
     String fileName = "page.png";
 
-    Directory imgDir = await getExternalStorageDirectory();
+    Directory imgDir = await (getExternalStorageDirectory() as FutureOr<Directory>);
     final String path = "${imgDir.path}/$fileName";
     final file = File(path);
 
-    await for (var page in Printing.raster(doc.content, dpi: SewooPrinter._printerDpi)) {
+    await for (var page in Printing.raster(doc.content as Uint8List, dpi: SewooPrinter._printerDpi as double)) {
 
       final pg = await page.toImage();
-      final ByteData byteData = await pg.toByteData(format: ImageByteFormat.png);
+      final ByteData byteData = await (pg.toByteData(format: ImageByteFormat.png) as FutureOr<ByteData>);
       Uint8List bytes = byteData.buffer.asUint8List();
       
-      if(doc.downToUp) {
-        im.Image image = im.decodeImage( bytes );
+      if(doc.downToUp!) {
+        im.Image image = im.decodeImage( bytes )!;
         im.Image rotatedImage = im.copyRotate( image , 180);
         bytes  = im.encodePng(rotatedImage) as Uint8List;
       }
@@ -135,7 +136,7 @@ class SewooPrinter {
     return path;
   }
 
-  static Future<String> printPriceTag(
+  static Future<String?> printPriceTag(
     PriceTagData priceTag, { int copies = 1, bool downToUp = true }) async {
 
     if (copies <= 0) {
@@ -156,12 +157,12 @@ class SewooPrinter {
       String status = 'Printing';
 
       try {
-        bool success = await _channel.invokeMethod('printImage', <String, dynamic> {
+        bool success = await (_channel.invokeMethod('printImage', <String, dynamic> {
           "path": path,
           "width": _mm2dots( 39 ), 
           "height": _mm2dots( 102 ),
           "copies": copies
-        });
+        }) as FutureOr<bool>);
         status = success ? 'Success' : 'Fail: Image not found';
         
       } on PlatformException catch (e) {

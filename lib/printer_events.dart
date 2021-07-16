@@ -1,6 +1,6 @@
 class PrinterEvent {
 
-  String name;
+  String? name;
   dynamic value;
 
   PrinterEvent(name, value) {

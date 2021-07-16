@@ -13,7 +13,7 @@ class PriceTagLayout {
   static final labelHeight = 95.5; // Milimeters, might be without margin
   
   static Map<String,String> _formatPrice(num price) {
-    String unit;
+    String? unit;
     String cents;
     String separator = ',';
     List<String> parts = price.toString().split('.');
@@ -181,7 +181,7 @@ class PriceTagLayout {
               ),
             ),
             Text(
-              formattedPrice['cents'],
+              formattedPrice['cents']!,
               style: TextStyle(
                 fontSize: 10,
                 //letterSpacing: 0.2,

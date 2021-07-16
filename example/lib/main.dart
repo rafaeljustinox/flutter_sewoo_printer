@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:sewoo_printer/printer_consts.dart';
 import 'package:sewoo_printer/pricetag_layout.dart';
 import 'package:sewoo_printer/pricetag_data.dart';
@@ -19,27 +17,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    try {
-      platformVersion = await SewooPrinter.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
@@ -66,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final printerDpi = PrinterConsts.dpi;
   final _thumbnails = <ImageProvider>[];
   
-  String _status = '';
+  //String _status = '';
   bool _connected = false;
   // Reading direction (down to up = left to right)
   bool _downToUp = true;
@@ -132,9 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _onStatusChanged(String status) {
-    setState(() {
-      _status = status;
-    });
+    print(status);
   }
 
   _connect() {
@@ -145,12 +124,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _getPrinterStatus() async {
+  /* _getPrinterStatus() async {
     _status = await SewooPrinter.getStatus();
-  }
+  } */
 
   _printPriceTag() async {
-    _status = await SewooPrinter.printPriceTag(
+    await SewooPrinter.printPriceTag(
       this._priceTag,
       downToUp: this._downToUp,
       copies: 1
@@ -160,11 +139,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void _updateThumbnails() async {
     _thumbnails.clear();
 
-    await for ( var page in Printing.raster(
-        await PriceTagLayout.buildDocument(this._priceTag),
-        dpi: PrinterConsts.dpi )
-      ) {
-      _thumbnails.add(PdfRasterImage(page));
+    var doc = await PriceTagLayout.buildDocument(this._priceTag);
+
+    await for ( var page in Printing.raster(doc, dpi: PrinterConsts.dpi ) ) {
+      if (_thumbnails.length == 0){
+        // Limits to only 1 image
+        _thumbnails.add(PdfRasterImage(page));
+      }
     }
     setState(() {});
   }
@@ -178,6 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
